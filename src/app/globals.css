@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-canvas: #F8FAF7;
+    --bg-subtle: #F1F4EE;
+    --bg-card: #FFFFFF;
+    --text-primary: #142019;
+    --text-secondary: #44544A;
+    --text-muted: #6C7D73;
+    --brand-primary: #1B4332;
+    --brand-forest-700: #235943;
+    --brand-forest-600: #2D7356;
+    --brand-forest-100: #E5EFE9;
+    --brand-forest-50: #EBF3EE;
+    --border-subtle: #E2E7DE;
+    --border-medium: #D0D7CC;
+    --border-strong: #B8C2B3;
+    --font-inter: 'Inter', sans-serif;
+    --font-jetbrains: 'JetBrains Mono', monospace;
+  }
+
+  * {
+    border-color: #D8DFD5;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  body {
+    background-color: #F8FAF7;
+    color: #142019;
+    font-family: var(--font-inter);
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F4EE;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C4CDC0;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1B4332;
+}
+
+/* 3D Perspective & Transform Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1500 {
+  perspective: 1500px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Consulting / Editorial Cards & Panels */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #D8DFD5;
+}
+
+.glass-card {
+  background: #FFFFFF;
+  border: 1px solid #D8DFD5;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(27, 67, 50, 0.45);
+  box-shadow: 0 16px 36px -4px rgba(27, 67, 50, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Workstation / Console Stage for Code and Dashboard Screenshots */
+.workstation-stage {
+  background: #0E1A14;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Grids & Background Atmosphere */
+.bg-command-grid {
+  background-image: 
+    linear-gradient(to right, rgba(27, 67, 50, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(27, 67, 50, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-blueprint-grid {
+  background-image: 
+    linear-gradient(to right, rgba(27, 67, 50, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(27, 67, 50, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
