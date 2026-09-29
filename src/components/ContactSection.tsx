@@ -13,7 +13,6 @@ import {
   Check,
   Send,
   Sparkles,
-  Terminal,
   ExternalLink
 } from 'lucide-react';
 
@@ -181,15 +180,15 @@ export const ContactSection: React.FC = () => {
 
           </div>
 
-          {/* Email Dispatch Form (Right 7 cols) */}
+          {/* Email Contact Form (Right 7 cols) */}
           <div className="lg:col-span-7 bg-white p-6 sm:p-9 rounded-3xl border border-[#D8DFD5] shadow-sm">
             <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#D8DFD5]">
               <div className="flex items-center gap-2 text-xs font-mono text-[#142019] font-bold">
-                <Terminal className="w-4 h-4 text-forest-700" />
-                Direct Email Dispatcher
+                <Mail className="w-4 h-4 text-forest-700" />
+                Send a Direct Message
               </div>
               <span className="text-[10px] font-mono text-forest-800 bg-forest-50 px-2.5 py-0.5 rounded-full border border-forest-600/30 font-bold">
-                PRE-FILLED CLIENT DISPATCH
+                DIRECT INQUIRY
               </span>
             </div>
 
@@ -234,13 +233,13 @@ export const ContactSection: React.FC = () => {
                 type="submit"
                 className="w-full py-4 rounded-xl font-mono text-xs font-bold bg-forest-800 hover:bg-forest-900 text-white shadow-sm transition-all flex items-center justify-center gap-2 group cursor-pointer"
               >
-                <span>Dispatch Pre-Filled Mail</span>
+                <span>Send Message</span>
                 <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
               {submitted && (
                 <div className="p-3.5 rounded-xl bg-forest-50 border border-forest-600/30 text-xs font-mono text-forest-800 text-center font-bold">
-                  Email client triggered with pre-filled message!
+                  Opening your email client with your message...
                 </div>
               )}
             </form>
