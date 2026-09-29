@@ -16,6 +16,7 @@ yarn-error.log*
 
 # Local environment variables
 .env*.local
+.env.local
 .env
 
 # Scratch scripts and test artifacts
