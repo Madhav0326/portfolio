@@ -13,13 +13,17 @@ import {
   Check,
   Send,
   Sparkles,
-  ExternalLink
+  ExternalLink,
+  Loader2,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 
 export const ContactSection: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const copyEmailToClipboard = () => {
     navigator.clipboard.writeText(PERSONAL_INFO.email);
@@ -27,14 +31,50 @@ export const ContactSection: React.FC = () => {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const openGmailCompose = () => {
+    const subject = encodeURIComponent(`Portfolio Inquiry from ${formData.name || 'Recruiter'}`);
+    const body = encodeURIComponent(`Sender: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
+    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${PERSONAL_INFO.email}&su=${subject}&body=${body}`, '_blank');
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.email || !formData.message) return;
 
-    const subject = encodeURIComponent(`Analytics Portfolio Inquiry from ${formData.name || 'Recruiter'}`);
-    const body = encodeURIComponent(`Sender: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
-    window.location.href = `mailto:${PERSONAL_INFO.email}?subject=${subject}&body=${body}`;
-    setSubmitted(true);
+    setStatus('loading');
+    setErrorMessage('');
+
+    try {
+      const accessKey =
+        process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || 'cf3e3cf3-46b5-4785-b7b6-b2b4a5b714dd';
+
+      const data = new FormData();
+      data.append('access_key', accessKey);
+      data.append('name', formData.name || 'Recruiter / Visitor');
+      data.append('email', formData.email);
+      data.append('message', formData.message);
+      data.append('from_name', `${formData.name || 'Recruiter'} via Portfolio`);
+      data.append('subject', `🎯 Portfolio Inquiry from ${formData.name || 'Recruiter'}`);
+
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: data,
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setStatus('error');
+        setErrorMessage(result.message || 'Unable to deliver message right now.');
+      }
+    } catch (err) {
+      console.error('Submission error:', err);
+      setStatus('error');
+      setErrorMessage('Network connection error. Please try opening in Gmail.');
+    }
   };
 
   return (
@@ -192,57 +232,117 @@ export const ContactSection: React.FC = () => {
               </span>
             </div>
 
-            <form onSubmit={handleFormSubmit} className="space-y-4 font-sans">
-              <div>
-                <label className="block text-xs font-mono text-[#6C7D73] mb-1.5 font-semibold">Your Name &amp; Company</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Analytics Hiring Team"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-[#F8FAF7] border border-[#D8DFD5] text-[#142019] placeholder:text-[#6C7D73] focus:outline-none focus:border-forest-700 focus:ring-1 focus:ring-forest-700/20 text-xs font-mono transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-[#6C7D73] mb-1.5 font-semibold">Your Email Address</label>
-                <input
-                  type="email"
-                  required
-                  placeholder="recruiter@organization.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-[#F8FAF7] border border-[#D8DFD5] text-[#142019] placeholder:text-[#6C7D73] focus:outline-none focus:border-forest-700 focus:ring-1 focus:ring-forest-700/20 text-xs font-mono transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-[#6C7D73] mb-1.5 font-semibold">Inquiry / Role Scope</label>
-                <textarea
-                  rows={4}
-                  required
-                  placeholder="Hi Madhav, we reviewed your analytics portfolio and would like to connect regarding an opening..."
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-[#F8FAF7] border border-[#D8DFD5] text-[#142019] placeholder:text-[#6C7D73] focus:outline-none focus:border-forest-700 focus:ring-1 focus:ring-forest-700/20 text-xs font-mono transition-all resize-none"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-4 rounded-xl font-mono text-xs font-bold bg-forest-800 hover:bg-forest-900 text-white shadow-sm transition-all flex items-center justify-center gap-2 group cursor-pointer"
+            {status === 'success' ? (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="py-10 text-center flex flex-col items-center justify-center space-y-4 font-mono"
               >
-                <span>Send Message</span>
-                <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              {submitted && (
-                <div className="p-3.5 rounded-xl bg-forest-50 border border-forest-600/30 text-xs font-mono text-forest-800 text-center font-bold">
-                  Opening your email client with your message...
+                <div className="w-14 h-14 rounded-2xl bg-forest-50 border border-forest-600/30 flex items-center justify-center text-forest-800 shadow-sm">
+                  <CheckCircle2 className="w-7 h-7 text-forest-700" />
                 </div>
-              )}
-            </form>
+                <div className="space-y-1.5 max-w-md">
+                  <h3 className="text-base font-bold text-[#142019]">Message Delivered Directly!</h3>
+                  <p className="text-xs text-[#44544A] font-sans leading-relaxed">
+                    Thank you for reaching out. Your inquiry has been sent straight to Madhav&apos;s inbox. I typically respond within 24 hours.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStatus('idle')}
+                  className="mt-3 px-5 py-2.5 rounded-xl bg-[#F1F4EE] border border-[#D8DFD5] text-[#142019] hover:border-forest-700 text-xs font-mono font-bold transition-all shadow-2xs cursor-pointer"
+                >
+                  Send Another Message
+                </button>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleFormSubmit} className="space-y-4 font-sans">
+                <div>
+                  <label className="block text-xs font-mono text-[#6C7D73] mb-1.5 font-semibold">Your Name &amp; Company</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Analytics Hiring Team"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-[#F8FAF7] border border-[#D8DFD5] text-[#142019] placeholder:text-[#6C7D73] focus:outline-none focus:border-forest-700 focus:ring-1 focus:ring-forest-700/20 text-xs font-mono transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono text-[#6C7D73] mb-1.5 font-semibold">Your Email Address</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="recruiter@organization.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-[#F8FAF7] border border-[#D8DFD5] text-[#142019] placeholder:text-[#6C7D73] focus:outline-none focus:border-forest-700 focus:ring-1 focus:ring-forest-700/20 text-xs font-mono transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono text-[#6C7D73] mb-1.5 font-semibold">Inquiry / Role Scope</label>
+                  <textarea
+                    rows={4}
+                    required
+                    placeholder="Hi Madhav, we reviewed your analytics portfolio and would like to connect regarding an opening..."
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-[#F8FAF7] border border-[#D8DFD5] text-[#142019] placeholder:text-[#6C7D73] focus:outline-none focus:border-forest-700 focus:ring-1 focus:ring-forest-700/20 text-xs font-mono transition-all resize-none"
+                  />
+                </div>
+
+                {status === 'error' && (
+                  <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-mono text-amber-900 space-y-2">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="font-bold text-amber-950">Notice</div>
+                        <div className="text-[11px] text-amber-900/90 font-sans mt-0.5">
+                          {errorMessage || 'Unable to submit directly. You can open Gmail directly with your message pre-filled.'}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={openGmailCompose}
+                        className="px-3 py-1.5 rounded-lg bg-forest-800 text-white text-[11px] font-mono font-semibold hover:bg-forest-900 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        Open in Gmail Web
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setStatus('idle')}
+                        className="px-3 py-1.5 rounded-lg bg-white border border-[#D8DFD5] text-[#142019] text-[11px] font-mono hover:bg-[#F1F4EE] transition-colors cursor-pointer"
+                      >
+                        Try Again
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="w-full py-4 rounded-xl font-mono text-xs font-bold bg-forest-800 hover:bg-forest-900 disabled:opacity-75 disabled:cursor-not-allowed text-white shadow-sm transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                >
+                  {status === 'loading' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Sending Message...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
           </div>
 
         </div>
