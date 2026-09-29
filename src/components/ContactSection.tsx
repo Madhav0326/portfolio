@@ -75,7 +75,7 @@ export const ContactSection: React.FC = () => {
                   <Mail className="w-5 h-5" />
                 </div>
                 <div className="overflow-hidden">
-                  <div className="text-[11px] font-mono text-[#6C7D73]">Direct Email Address</div>
+                  <div className="text-[11px] font-mono text-[#6C7D73]">E-mail Address</div>
                   <a
                     href={`mailto:${PERSONAL_INFO.email}`}
                     className="text-sm font-semibold text-[#142019] hover:text-forest-700 transition-colors truncate block font-mono"
@@ -110,7 +110,7 @@ export const ContactSection: React.FC = () => {
                 <Phone className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-[11px] font-mono text-[#6C7D73]">Phone &amp; Direct Line</div>
+                <div className="text-[11px] font-mono text-[#6C7D73]">Phone No.</div>
                 <a
                   href={`tel:${PERSONAL_INFO.phone}`}
                   className="text-sm font-semibold text-[#142019] hover:text-forest-700 transition-colors font-mono"
@@ -127,7 +127,7 @@ export const ContactSection: React.FC = () => {
                   <Linkedin className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-mono text-[#6C7D73]">Professional LinkedIn</div>
+                  <div className="text-[11px] font-mono text-[#6C7D73]">LinkedIn Profile</div>
                   <div className="text-sm font-semibold text-[#142019] font-mono">/in/n-madhavmukesh</div>
                 </div>
               </div>
@@ -172,7 +172,7 @@ export const ContactSection: React.FC = () => {
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-[11px] font-mono text-[#6C7D73]">Current Base</div>
+                <div className="text-[11px] font-mono text-[#6C7D73]">Current Location</div>
                 <div className="text-sm font-semibold text-[#142019]">{PERSONAL_INFO.location}</div>
                 <div className="text-[11px] font-mono text-forest-700 font-bold">{PERSONAL_INFO.relocation}</div>
               </div>
